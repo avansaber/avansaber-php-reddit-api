@@ -6,6 +6,7 @@ namespace Avansaber\RedditApi\Resources;
 
 use Avansaber\RedditApi\Data\Comment;
 use Avansaber\RedditApi\Http\RedditApiClient;
+use Avansaber\RedditApi\Value\Fullname;
 
 final class Links
 {
@@ -13,19 +14,19 @@ final class Links
     {
     }
 
-    public function upvote(string $fullname): void
+    public function upvote(string|Fullname $fullname): void
     {
-        $this->vote($fullname, 1);
+        $this->vote((string) $fullname, 1);
     }
 
-    public function downvote(string $fullname): void
+    public function downvote(string|Fullname $fullname): void
     {
-        $this->vote($fullname, -1);
+        $this->vote((string) $fullname, -1);
     }
 
-    public function unvote(string $fullname): void
+    public function unvote(string|Fullname $fullname): void
     {
-        $this->vote($fullname, 0);
+        $this->vote((string) $fullname, 0);
     }
 
     private function vote(string $fullname, int $dir): void
@@ -38,10 +39,10 @@ final class Links
         // For simplicity, we are not parsing body; Reddit returns 204/200
     }
 
-    public function reply(string $fullname, string $text): Comment
+    public function reply(string|Fullname $fullname, string $text): Comment
     {
         $json = $this->client->request('POST', '/api/comment', [], [], [
-            'thing_id' => $fullname,
+            'thing_id' => (string) $fullname,
             'text' => $text,
             'api_type' => 'json',
         ]);

@@ -67,7 +67,27 @@ $accessToken = $auth->appOnly('CLIENT_ID', 'CLIENT_SECRET', ['read','identity'])
   ```
 - Using an existing user token:
   - Set `REDDIT_ACCESS_TOKEN` and run `examples/me.php`.
-- Note: Full Authorization Code + PKCE flow will be provided in a future version (see `package-plan.md`).
+Authorization Code + PKCE
+- Generate PKCE pair and build the authorize URL, then exchange the code on callback:
+  ```php
+use Avansaber\RedditApi\Auth\Auth;
+use Avansaber\RedditApi\Config\Config;
+use Http\Discovery\Psr18ClientDiscovery; use Http\Discovery\Psr17FactoryDiscovery;
+
+$http = Psr18ClientDiscovery::find();
+$psr17 = Psr17FactoryDiscovery::findRequestFactory();
+$streamFactory = Psr17FactoryDiscovery::findStreamFactory();
+$config = new Config('yourapp/1.0 (by yourdomain.com; contact you@example.com)');
+$auth = new Auth($http, $psr17, $streamFactory, $config);
+
+$pkce = $auth->generatePkcePair(); // ['verifier' => '...', 'challenge' => '...']
+$url = $auth->getAuthUrl('CLIENT_ID', 'https://yourapp/callback', ['identity','read','submit'], 'csrf123', $pkce['challenge']);
+// Redirect user to $url
+
+// In your callback handler:
+$tokens = $auth->getAccessTokenFromCode('CLIENT_ID', null, $_GET['code'], 'https://yourapp/callback', $pkce['verifier']);
+// $tokens contains access_token, refresh_token, expires_in, scope
+  ```
 
 Temporary manual Authorization Code exchange (for testing)
 ```bash
@@ -110,12 +130,26 @@ foreach ($listing->items as $post) {
     echo $post->title . "\n";
 }
   ```
+- User history (comments/submitted):
+  ```php
+$comments = $client->user()->comments('spez', ['limit' => 10]);
+$posts = $client->user()->submitted('spez', ['limit' => 10]);
+  ```
 - Subreddit info: `$sr = $client->subreddit()->about('php');`
 - User info: `$u = $client->user()->about('spez');`
 - Voting and replying (requires user-context token with proper scopes):
   ```php
 $client->links()->upvote('t3_abc123');
 $comment = $client->links()->reply('t3_abc123', 'Nice post!');
+  ```
+- Private messages inbox:
+  ```php
+$inbox = $client->messages()->inbox(['limit' => 10]);
+  ```
+- Basic moderation:
+  ```php
+$client->moderation()->approve('t3_abc123');
+$client->moderation()->remove('t3_abc123', true);
   ```
 
 Rate limiting and retries
