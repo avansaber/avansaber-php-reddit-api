@@ -31,6 +31,7 @@
   },
   "scripts": {
     "test": "phpunit --colors=always",
+    "test:coverage": "phpunit --coverage-clover=coverage.xml",
     "cs:fix": "php-cs-fixer fix --ansi",
     "phpstan": "phpstan analyse src --level=max"
   },

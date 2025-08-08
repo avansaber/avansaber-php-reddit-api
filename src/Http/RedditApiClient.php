@@ -43,6 +43,16 @@ final class RedditApiClient
         return $this->config;
     }
 
+    private ?RateLimitInfo $lastRateLimitInfo = null;
+
+    /**
+     * Get the last parsed Reddit rate limit info from response headers, if available.
+     */
+    public function getLastRateLimitInfo(): ?RateLimitInfo
+    {
+        return $this->lastRateLimitInfo;
+    }
+
     /**
      * Sends an HTTP request to Reddit API using PSR-18 client.
      *
@@ -90,6 +100,7 @@ final class RedditApiClient
 
             $status = $response->getStatusCode();
             $body = (string) $response->getBody();
+            $this->lastRateLimitInfo = $this->parseRateLimit($response);
 
             if ($status >= 200 && $status < 300) {
                 // Optionally parse rate limit headers here (not yet surfaced)
@@ -125,6 +136,14 @@ final class RedditApiClient
             ? max(0, $retryAfterSeconds * 1000)
             : (int) (100.0 * (2 ** ($attempt - 1))); // 100ms, 200ms, 400ms ...
         $this->sleeper?->sleep($delayMs);
+    }
+
+    private function parseRateLimit(\Psr\Http\Message\ResponseInterface $response): RateLimitInfo
+    {
+        $remaining = $response->hasHeader('x-ratelimit-remaining') ? (float) $response->getHeaderLine('x-ratelimit-remaining') : null;
+        $used = $response->hasHeader('x-ratelimit-used') ? (float) $response->getHeaderLine('x-ratelimit-used') : null;
+        $reset = $response->hasHeader('x-ratelimit-reset') ? (float) $response->getHeaderLine('x-ratelimit-reset') : null;
+        return new RateLimitInfo($remaining, $used, $reset);
     }
 
     public function me(): Me

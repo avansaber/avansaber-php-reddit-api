@@ -2,6 +2,10 @@ avansaber/php-reddit-api
 
 Modern, fluent, framework-agnostic Reddit API client for PHP (PSR-18/PSR-7/PSR-3).
 
+![CI](https://github.com/avansaber/avansaber-php-reddit-api/actions/workflows/ci.yml/badge.svg)
+[![Packagist](https://img.shields.io/packagist/v/avansaber/php-reddit-api.svg)](https://packagist.org/packages/avansaber/php-reddit-api)
+[![Downloads](https://img.shields.io/packagist/dt/avansaber/php-reddit-api.svg)](https://packagist.org/packages/avansaber/php-reddit-api)
+
 Features
 - PSR-18 HTTP client and PSR-7/17 factories (bring your own client)
 - Typed DTOs and resources (`me`, `search`, `subreddit`, `user`)
@@ -128,6 +132,13 @@ Common usage
 $listing = $client->search()->get('php', ['limit' => 5, 'sort' => 'relevance']);
 foreach ($listing->items as $post) {
     echo $post->title . "\n";
+}
+  ```
+- Pagination helper example:
+  ```php
+$first = $client->search()->get('php', ['limit' => 100]);
+foreach ($first->iterate(fn($after) => $client->search()->get('php', ['limit' => 100, 'after' => $after])) as $post) {
+    // handle $post (Link DTO) across multiple pages
 }
   ```
 - User history (comments/submitted):
