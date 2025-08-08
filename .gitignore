@@ -1,7 +1,6 @@
 vendor/
 .phpunit.result.cache
 .php-cs-fixer.cache
-phpstan-baseline.neon
 /package-plan.md
 /laravel-plan.md
 /.idea/
