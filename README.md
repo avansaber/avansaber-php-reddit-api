@@ -165,6 +165,7 @@ $client->moderation()->remove('t3_abc123', true);
 
 Rate limiting and retries
 - Reddit returns `x-ratelimit-remaining`, `x-ratelimit-used`, `x-ratelimit-reset` headers.
+- The client parses these headers and exposes the latest via `$client->getLastRateLimitInfo()`.
 - The client retries 429/5xx with exponential backoff and respects `Retry-After` when present.
 
 Error handling
@@ -251,6 +252,9 @@ Security notes
 
 Contributing
 - See CONTRIBUTING.md
+
+Changelog
+- See `CHANGELOG.md`. We follow Conventional Commits and tag releases. 
 
 Security
 - See SECURITY.md
