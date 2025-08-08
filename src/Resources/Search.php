@@ -16,20 +16,22 @@ final class Search
 
     /**
      * @param array{sort?: string, t?: string, limit?: int, after?: string, before?: string, type?: string} $options
+     * @return Listing<Link>
      */
     public function get(string $query, array $options = []): Listing
     {
         $params = ['q' => $query] + $options;
         $json = $this->client->request('GET', '/search.json', $params);
         $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-
-        $after = $decoded['data']['after'] ?? null;
-        $before = $decoded['data']['before'] ?? null;
-        $children = $decoded['data']['children'] ?? [];
+        $root = is_array($decoded) ? $decoded : [];
+        $data = isset($root['data']) && is_array($root['data']) ? $root['data'] : [];
+        $after = $data['after'] ?? null;
+        $before = $data['before'] ?? null;
+        $children = isset($data['children']) && is_array($data['children']) ? $data['children'] : [];
 
         $items = [];
         foreach ($children as $child) {
-            if (($child['kind'] ?? '') !== 't3' || !isset($child['data']) || !is_array($child['data'])) {
+            if (!is_array($child) || ($child['kind'] ?? '') !== 't3' || !isset($child['data']) || !is_array($child['data'])) {
                 continue;
             }
             $d = $child['data'];

@@ -10,6 +10,9 @@ use Avansaber\RedditApi\Resources\Me;
 use Avansaber\RedditApi\Resources\Search;
 use Avansaber\RedditApi\Resources\Subreddit;
 use Avansaber\RedditApi\Resources\User;
+use Avansaber\RedditApi\Resources\PrivateMessages;
+use Avansaber\RedditApi\Resources\Moderation;
+use Avansaber\RedditApi\Resources\Flair;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -147,5 +150,20 @@ final class RedditApiClient
     public function links(): \Avansaber\RedditApi\Resources\Links
     {
         return new \Avansaber\RedditApi\Resources\Links($this);
+    }
+
+    public function messages(): PrivateMessages
+    {
+        return new PrivateMessages($this);
+    }
+
+    public function moderation(): Moderation
+    {
+        return new Moderation($this);
+    }
+
+    public function flair(): Flair
+    {
+        return new Flair($this);
     }
 }
