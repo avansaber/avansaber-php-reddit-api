@@ -165,40 +165,7 @@ parameters:
 			count: 2
 			path: src/Resources/Me.php
 
-		-
-			message: "#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: src/Resources/Search.php
-
-		-
-			message: "#^Cannot access offset 'after' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Search.php
-
-		-
-			message: "#^Cannot access offset 'before' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Search.php
-
-		-
-			message: "#^Cannot access offset 'children' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Search.php
-
-		-
-			message: "#^Cannot access offset 'data' on mixed\\.$#"
-			count: 4
-			path: src/Resources/Search.php
-
-		-
-			message: "#^Cannot access offset 'kind' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Search.php
-
-		-
-			message: "#^Method Avansaber\\\\RedditApi\\\\Resources\\\\Search\\:\\:get\\(\\) return type with generic class Avansaber\\\\RedditApi\\\\Data\\\\Listing does not specify its types\\: T$#"
-			count: 1
-			path: src/Resources/Search.php
+		# Cleaned Search.php issues by adding stricter typing and generics annotations
 
 		-
 			message: "#^Cannot access offset 'data' on mixed\\.$#"
@@ -250,42 +217,4 @@ parameters:
 			count: 5
 			path: src/Resources/Subreddit.php
 
-		-
-			message: "#^Cannot access offset 'created_utc' on mixed\\.$#"
-			count: 1
-			path: src/Resources/User.php
-
-		-
-			message: "#^Cannot access offset 'data' on mixed\\.$#"
-			count: 1
-			path: src/Resources/User.php
-
-		-
-			message: "#^Cannot access offset 'id' on mixed\\.$#"
-			count: 1
-			path: src/Resources/User.php
-
-		-
-			message: "#^Cannot access offset 'is_employee' on mixed\\.$#"
-			count: 1
-			path: src/Resources/User.php
-
-		-
-			message: "#^Cannot access offset 'is_mod' on mixed\\.$#"
-			count: 1
-			path: src/Resources/User.php
-
-		-
-			message: "#^Cannot access offset 'name' on mixed\\.$#"
-			count: 1
-			path: src/Resources/User.php
-
-		-
-			message: "#^Cannot cast mixed to float\\.$#"
-			count: 1
-			path: src/Resources/User.php
-
-		-
-			message: "#^Cannot cast mixed to string\\.$#"
-			count: 2
-			path: src/Resources/User.php
+		# Cleaned User.php issues by adding array guards and generics annotations
