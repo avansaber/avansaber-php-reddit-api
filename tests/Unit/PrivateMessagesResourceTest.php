@@ -33,8 +33,8 @@ final class PrivateMessagesResourceTest extends TestCase
 
         $listing = (new \Avansaber\RedditApi\Resources\PrivateMessages($client))->inbox(['limit' => 1]);
         $this->assertCount(1, $listing->items);
-        $this->assertSame('m1', $listing->items[0]['id']);
-        $this->assertSame('Hello', $listing->items[0]['subject']);
+        $this->assertSame('m1', $listing->items[0]->id);
+        $this->assertSame('Hello', $listing->items[0]->subject);
     }
 }
 

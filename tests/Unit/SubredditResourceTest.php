@@ -35,7 +35,7 @@ final class SubredditResourceTest extends TestCase
         $http->addResponse(new Response(200, ['Content-Type' => 'application/json'], json_encode($payload, JSON_THROW_ON_ERROR)));
 
         $sr = $client->subreddit()->about('php');
-        $this->assertSame('php', $sr->name);
+        $this->assertSame('php', $sr->displayName);
         $this->assertSame('PHP', $sr->title);
         $this->assertSame(123, $sr->subscribers);
     }

@@ -6,41 +6,6 @@ parameters:
 			path: src/Auth/Auth.php
 
 		-
-			message: "#^Cannot access offset 'access_token' on mixed\\.$#"
-			count: 1
-			path: src/Auth/PdoSqliteTokenStorage.php
-
-		-
-			message: "#^Cannot access offset 'expires_at_epoch' on mixed\\.$#"
-			count: 1
-			path: src/Auth/PdoSqliteTokenStorage.php
-
-		-
-			message: "#^Cannot access offset 'owner_tenant_id' on mixed\\.$#"
-			count: 1
-			path: src/Auth/PdoSqliteTokenStorage.php
-
-		-
-			message: "#^Cannot access offset 'owner_user_id' on mixed\\.$#"
-			count: 1
-			path: src/Auth/PdoSqliteTokenStorage.php
-
-		-
-			message: "#^Cannot access offset 'provider_user_id' on mixed\\.$#"
-			count: 1
-			path: src/Auth/PdoSqliteTokenStorage.php
-
-		-
-			message: "#^Cannot access offset 'refresh_token' on mixed\\.$#"
-			count: 1
-			path: src/Auth/PdoSqliteTokenStorage.php
-
-		-
-			message: "#^Cannot access offset 'scopes' on mixed\\.$#"
-			count: 1
-			path: src/Auth/PdoSqliteTokenStorage.php
-
-		-
 			message: "#^Cannot cast mixed to int\\.$#"
 			count: 1
 			path: src/Auth/PdoSqliteTokenStorage.php
@@ -48,6 +13,11 @@ parameters:
 		-
 			message: "#^Cannot cast mixed to string\\.$#"
 			count: 5
+			path: src/Auth/PdoSqliteTokenStorage.php
+
+		-
+			message: "#^Parameter \\#1 \\$row of method Avansaber\\\\RedditApi\\\\Auth\\\\PdoSqliteTokenStorage\\:\\:rowToToken\\(\\) expects array\\<string, mixed\\>, mixed given\\.$#"
+			count: 1
 			path: src/Auth/PdoSqliteTokenStorage.php
 
 		-
@@ -71,48 +41,28 @@ parameters:
 			path: src/Http/RedditApiClient.php
 
 		-
-			message: "#^Cannot access offset 'author' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Links.php
-
-		-
-			message: "#^Cannot access offset 'body' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Links.php
-
-		-
 			message: "#^Cannot access offset 'data' on mixed\\.$#"
-			count: 2
-			path: src/Resources/Links.php
-
-		-
-			message: "#^Cannot access offset 'id' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Links.php
-
-		-
-			message: "#^Cannot access offset 'json' on mixed\\.$#"
-			count: 2
+			count: 3
 			path: src/Resources/Links.php
 
 		-
 			message: "#^Cannot access offset 'errors' on mixed\\.$#"
-			count: 1
+			count: 3
+			path: src/Resources/Links.php
+
+		-
+			message: "#^Cannot access offset 'id' on mixed\\.$#"
+			count: 2
+			path: src/Resources/Links.php
+
+		-
+			message: "#^Cannot access offset 'json' on mixed\\.$#"
+			count: 5
 			path: src/Resources/Links.php
 
 		-
 			message: "#^Cannot access offset 'name' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Links.php
-
-		-
-			message: "#^Cannot access offset 'permalink' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Links.php
-
-		-
-			message: "#^Cannot access offset 'score' on mixed\\.$#"
-			count: 1
+			count: 2
 			path: src/Resources/Links.php
 
 		-
@@ -121,105 +71,101 @@ parameters:
 			path: src/Resources/Links.php
 
 		-
-			message: "#^Cannot access offset 0 on mixed\\.$#"
+			message: "#^Cannot access offset 'url' on mixed\\.$#"
 			count: 2
 			path: src/Resources/Links.php
 
 		-
-			message: "#^Cannot cast mixed to int\\.$#"
-			count: 1
+			message: "#^Cannot access offset 0 on mixed\\.$#"
+			count: 4
 			path: src/Resources/Links.php
 
 		-
 			message: "#^Cannot cast mixed to string\\.$#"
-			count: 6
+			count: 11
 			path: src/Resources/Links.php
 
 		-
-			message: "#^Cannot access offset 'created_utc' on mixed\\.$#"
+			message: "#^Parameter \\#1 \\$c of static method Avansaber\\\\RedditApi\\\\Resources\\\\User\\:\\:mapComment\\(\\) expects array\\<string, mixed\\>, mixed given\\.$#"
 			count: 1
-			path: src/Resources/Me.php
+			path: src/Resources/Links.php
 
 		-
-			message: "#^Cannot access offset 'id' on mixed\\.$#"
+			message: "#^Cannot access offset 'errors' on mixed\\.$#"
 			count: 1
-			path: src/Resources/Me.php
+			path: src/Resources/PrivateMessages.php
 
 		-
-			message: "#^Cannot access offset 'is_employee' on mixed\\.$#"
+			message: "#^Cannot access offset 'json' on mixed\\.$#"
 			count: 1
-			path: src/Resources/Me.php
+			path: src/Resources/PrivateMessages.php
 
 		-
-			message: "#^Cannot access offset 'is_mod' on mixed\\.$#"
+			message: "#^Cannot access offset 0 on mixed\\.$#"
 			count: 1
-			path: src/Resources/Me.php
-
-		-
-			message: "#^Cannot access offset 'name' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Me.php
+			path: src/Resources/PrivateMessages.php
 
 		-
 			message: "#^Cannot cast mixed to float\\.$#"
 			count: 1
-			path: src/Resources/Me.php
+			path: src/Resources/PrivateMessages.php
 
 		-
 			message: "#^Cannot cast mixed to string\\.$#"
-			count: 2
-			path: src/Resources/Me.php
-
-		# Cleaned Search.php issues by adding stricter typing and generics annotations
+			count: 7
+			path: src/Resources/PrivateMessages.php
 
 		-
-			message: "#^Cannot access offset 'data' on mixed\\.$#"
+			message: "#^Cannot cast mixed to float\\.$#"
 			count: 1
-			path: src/Resources/Subreddit.php
+			path: src/Resources/Search.php
 
 		-
-			message: "#^Cannot access offset 'display_name' on mixed\\.$#"
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 4
+			path: src/Resources/Search.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 9
+			path: src/Resources/Search.php
+
+		-
+			message: "#^Parameter \\$edited of class Avansaber\\\\RedditApi\\\\Data\\\\Link constructor expects bool\\|float, mixed given\\.$#"
 			count: 1
-			path: src/Resources/Subreddit.php
+			path: src/Resources/Search.php
 
 		-
-			message: "#^Cannot access offset 'id' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Subreddit.php
-
-		-
-			message: "#^Cannot access offset 'over18' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Subreddit.php
-
-		-
-			message: "#^Cannot access offset 'public_description' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Subreddit.php
-
-		-
-			message: "#^Cannot access offset 'subscribers' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Subreddit.php
-
-		-
-			message: "#^Cannot access offset 'title' on mixed\\.$#"
-			count: 1
-			path: src/Resources/Subreddit.php
-
-		-
-			message: "#^Cannot access offset 'url' on mixed\\.$#"
+			message: "#^Cannot cast mixed to float\\.$#"
 			count: 1
 			path: src/Resources/Subreddit.php
 
 		-
 			message: "#^Cannot cast mixed to int\\.$#"
-			count: 1
+			count: 2
 			path: src/Resources/Subreddit.php
 
 		-
 			message: "#^Cannot cast mixed to string\\.$#"
-			count: 5
+			count: 8
 			path: src/Resources/Subreddit.php
 
-		# Cleaned User.php issues by adding array guards and generics annotations
+		-
+			message: "#^Cannot cast mixed to float\\.$#"
+			count: 2
+			path: src/Resources/User.php
+
+		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 6
+			path: src/Resources/User.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 12
+			path: src/Resources/User.php
+
+		-
+			message: "#^Parameter \\$edited of class Avansaber\\\\RedditApi\\\\Data\\\\Comment constructor expects bool\\|float, mixed given\\.$#"
+			count: 1
+			path: src/Resources/User.php

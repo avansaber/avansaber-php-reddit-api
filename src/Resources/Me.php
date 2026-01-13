@@ -17,13 +17,8 @@ final class Me
     {
         $json = $this->client->request('GET', '/api/v1/me');
         $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $d = is_array($data) ? $data : [];
 
-        return new User(
-            id: (string) ($data['id'] ?? ''),
-            name: (string) ($data['name'] ?? ''),
-            isEmployee: (bool) ($data['is_employee'] ?? false),
-            isMod: (bool) ($data['is_mod'] ?? false),
-            createdUtc: (float) ($data['created_utc'] ?? 0),
-        );
+        return \Avansaber\RedditApi\Resources\User::mapUser($d);
     }
 }
