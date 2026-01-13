@@ -41,6 +41,26 @@ parameters:
 			path: src/Http/RedditApiClient.php
 
 		-
+			message: "#^Cannot access offset 'errors' on mixed\\.$#"
+			count: 1
+			path: src/Resources/Flair.php
+
+		-
+			message: "#^Cannot access offset 'json' on mixed\\.$#"
+			count: 1
+			path: src/Resources/Flair.php
+
+		-
+			message: "#^Cannot access offset 0 on mixed\\.$#"
+			count: 1
+			path: src/Resources/Flair.php
+
+		-
+			message: "#^Cannot cast mixed to string\\.$#"
+			count: 4
+			path: src/Resources/Flair.php
+
+		-
 			message: "#^Cannot access offset 'data' on mixed\\.$#"
 			count: 3
 			path: src/Resources/Links.php

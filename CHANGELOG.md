@@ -10,9 +10,10 @@ All notable changes to this project will be documented in this file.
 - `Auth::validateState()` for OAuth state validation (prevents CSRF attacks)
 - User history endpoints: `user()->comments()`, `user()->submitted()`
 - Private messages: `messages()->inbox()`, `sent()`, `unread()`, `compose()`, `markRead()`, `markUnread()`, `delete()`, `blockAuthor()`
-- Moderation actions: `moderation()->approve()`, `moderation()->remove()`
-- Flair retrieval: `flair()->get()`
-- Value objects: `Fullname`, `SubredditName`, `Username`
+- Moderation actions: `moderation()->approve()`, `remove()`, `lock()`, `unlock()`, `sticky()`, `unsticky()`, `distinguish()`, `ignoreReports()`, `markNsfw()`, `markSpoiler()`
+- Flair: `flair()->getLinkFlairs()`, `getUserFlairs()`, `setLinkFlair()`, `setUserFlair()`, `removeUserFlair()`
+- `Flair` DTO with id, text, colors, cssClass, textEditable
+- Value objects: `Fullname`, `SubredditName`, `Username` (with proper validation)
 - Enums: `Sort`, `TimeWindow`, `VoteDirection`
 - Pagination iterator helper: `Listing::iterate()`
 - `RealSleeper` for production rate limit backoff (replaces NoopSleeper as default)
@@ -22,6 +23,11 @@ All notable changes to this project will be documented in this file.
 - `PdoSqliteTokenStorage::deleteExpiredTokens()` for cleaning up expired tokens
 - `PdoSqliteTokenStorage::generateEncryptionKey()` helper for key generation
 - `Message` DTO for private messages with full field coverage
+- Subreddit listings: `subreddit()->hot()`, `new()`, `top()`, `rising()`, `controversial()`
+- Subreddit actions: `subreddit()->subscribe()`, `unsubscribe()`, `rules()`
+- Comments resource: `comments()->get()`, `getComment()` for fetching post comments
+- PHP 8.4 support in CI matrix
+- Composer dependency caching in CI
 
 ### Fixed
 - **Security**: OAuth flow now includes state parameter helpers for CSRF protection
@@ -39,6 +45,9 @@ All notable changes to this project will be documented in this file.
 - Expanded `Comment` DTO with 20 fields (added `createdUtc`, `edited`, `parentId`, `subreddit`, `subredditId`, `linkId`, `isSubmitter`, `stickied`, `scoreHidden`, `locked`, `authorFlairText`)
 - Expanded `User` DTO with 14 fields (added `linkKarma`, `commentKarma`, `totalKarma`, `isGold`, `hasVerifiedEmail`, `iconImg`, `over18`, `isSuspended`)
 - Expanded `Subreddit` DTO with 18 fields (added `description`, `createdUtc`, `subredditType`, `quarantine`, `bannerImg`, `iconImg`, `headerImg`, `primaryColor`, `keyColor`)
+- `Username` validation: 3-20 chars, alphanumeric + hyphen/underscore, cannot start with hyphen/underscore
+- `SubredditName` validation: 3-21 chars, alphanumeric + underscore, strips r/ prefix automatically
+- `Config` validation: timeout bounds (1-120s), retry bounds (0-10)
 
 ### Removed
 - Duplicate "Authorization Code + PKCE (placeholder)" section from README

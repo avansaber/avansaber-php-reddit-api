@@ -6,6 +6,7 @@ namespace Avansaber\RedditApi\Http;
 
 use Avansaber\RedditApi\Config\Config;
 use Avansaber\RedditApi\Exceptions\RedditApiException;
+use Avansaber\RedditApi\Resources\Comments;
 use Avansaber\RedditApi\Resources\Me;
 use Avansaber\RedditApi\Resources\Search;
 use Avansaber\RedditApi\Resources\Subreddit;
@@ -189,5 +190,10 @@ final class RedditApiClient
     public function flair(): Flair
     {
         return new Flair($this);
+    }
+
+    public function comments(): Comments
+    {
+        return new Comments($this);
     }
 }

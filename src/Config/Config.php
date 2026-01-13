@@ -6,6 +6,11 @@ namespace Avansaber\RedditApi\Config;
 
 final class Config
 {
+    private const MIN_TIMEOUT_SECONDS = 1.0;
+    private const MAX_TIMEOUT_SECONDS = 120.0;
+    private const MIN_RETRIES = 0;
+    private const MAX_RETRIES = 10;
+
     private string $baseUri;
     private string $authBaseUri;
     private string $userAgent;
@@ -13,10 +18,10 @@ final class Config
     private int $maxRetries;
 
     /**
-     * @param string $userAgent Reddit-compliant User-Agent (required)
+     * @param string $userAgent Reddit-compliant User-Agent (required). Format: <platform>:<app ID>:<version> (by /u/<username>)
      * @param string $baseUri Base URI for API calls (default: https://oauth.reddit.com)
-     * @param float $timeoutSeconds HTTP request timeout
-     * @param int $maxRetries Maximum retry attempts for 429/5xx errors
+     * @param float $timeoutSeconds HTTP request timeout (1-120 seconds)
+     * @param int $maxRetries Maximum retry attempts for 429/5xx errors (0-10)
      * @param string $authBaseUri Base URI for OAuth endpoints (default: https://www.reddit.com)
      */
     public function __construct(
@@ -29,6 +34,30 @@ final class Config
         $userAgent = trim($userAgent);
         if ($userAgent === '') {
             throw new \InvalidArgumentException('User-Agent must not be empty. Reddit requires a descriptive UA.');
+        }
+
+        // Validate timeout is within reasonable bounds
+        if ($timeoutSeconds < self::MIN_TIMEOUT_SECONDS) {
+            throw new \InvalidArgumentException(
+                sprintf('Timeout must be at least %.1f seconds, got %.3f', self::MIN_TIMEOUT_SECONDS, $timeoutSeconds)
+            );
+        }
+        if ($timeoutSeconds > self::MAX_TIMEOUT_SECONDS) {
+            throw new \InvalidArgumentException(
+                sprintf('Timeout cannot exceed %.1f seconds, got %.1f', self::MAX_TIMEOUT_SECONDS, $timeoutSeconds)
+            );
+        }
+
+        // Validate retries are within reasonable bounds
+        if ($maxRetries < self::MIN_RETRIES) {
+            throw new \InvalidArgumentException(
+                sprintf('Max retries cannot be negative, got %d', $maxRetries)
+            );
+        }
+        if ($maxRetries > self::MAX_RETRIES) {
+            throw new \InvalidArgumentException(
+                sprintf('Max retries cannot exceed %d, got %d', self::MAX_RETRIES, $maxRetries)
+            );
         }
 
         $this->userAgent = $userAgent;

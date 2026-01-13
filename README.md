@@ -8,9 +8,13 @@ Modern, fluent, framework-agnostic Reddit API client for PHP (PSR-18/PSR-7/PSR-3
 
 Features
 - PSR-18 HTTP client and PSR-7/17 factories (bring your own client)
-- Typed DTOs and resources (`me`, `search`, `subreddit`, `user`)
-- Write actions (`vote`, `reply`)
-- Token storage abstraction and optional SQLite storage
+- Typed DTOs: Link, Comment, User, Subreddit, Message, Flair
+- Resources: me, search, subreddit (with listings), user, comments, messages, moderation, flair
+- Write actions: vote, reply, submit posts, edit, delete, save/unsave, hide/unhide
+- Private messages: inbox, sent, unread, compose, markRead
+- Moderation: approve, remove, lock/unlock, sticky, distinguish, NSFW/spoiler marking
+- Token storage with optional SQLite + sodium encryption
+- CSRF protection helpers for OAuth (state parameter validation)
 - Auto-refresh tokens on 401
 - Retries/backoff for 429/5xx
 
@@ -71,8 +75,8 @@ $accessToken = $auth->appOnly('CLIENT_ID', 'CLIENT_SECRET', ['read','identity'])
   ```
 - Using an existing user token:
   - Set `REDDIT_ACCESS_TOKEN` and run `examples/me.php`.
-Authorization Code + PKCE
-- Generate PKCE pair and build the authorize URL, then exchange the code on callback:
+Authorization Code + PKCE (with CSRF protection)
+- Generate PKCE pair, state parameter, and build the authorize URL. Validate state on callback:
   ```php
 use Avansaber\RedditApi\Auth\Auth;
 use Avansaber\RedditApi\Config\Config;
@@ -84,12 +88,24 @@ $streamFactory = Psr17FactoryDiscovery::findStreamFactory();
 $config = new Config('yourapp/1.0 (by yourdomain.com; contact you@example.com)');
 $auth = new Auth($http, $psr17, $streamFactory, $config);
 
+// Generate PKCE pair and CSRF state token
 $pkce = $auth->generatePkcePair(); // ['verifier' => '...', 'challenge' => '...']
-$url = $auth->getAuthUrl('CLIENT_ID', 'https://yourapp/callback', ['identity','read','submit'], 'csrf123', $pkce['challenge']);
+$state = Auth::generateState(); // Secure random hex string
+
+// Store state and verifier in session for later validation
+$_SESSION['oauth_state'] = $state;
+$_SESSION['oauth_verifier'] = $pkce['verifier'];
+
+$url = $auth->getAuthUrl('CLIENT_ID', 'https://yourapp/callback', ['identity','read','submit'], $state, $pkce['challenge']);
 // Redirect user to $url
 
 // In your callback handler:
-$tokens = $auth->getAccessTokenFromCode('CLIENT_ID', null, $_GET['code'], 'https://yourapp/callback', $pkce['verifier']);
+try {
+    Auth::validateState($_SESSION['oauth_state'], $_GET['state']); // Throws on mismatch
+} catch (\InvalidArgumentException $e) {
+    die('CSRF validation failed');
+}
+$tokens = $auth->getAccessTokenFromCode('CLIENT_ID', null, $_GET['code'], 'https://yourapp/callback', $_SESSION['oauth_verifier']);
 // $tokens contains access_token, refresh_token, expires_in, scope
   ```
 
@@ -112,10 +128,15 @@ Scopes
 | Scope            | Description                      | Used by                                 |
 | ---------------- | -------------------------------- | --------------------------------------- |
 | identity         | Verify the current user          | `me()`                                  |
-| read             | Read public data                 | `search()`, `subreddit()->about()`, `user()->about()` |
+| read             | Read public data                 | `search()`, `subreddit()`, `user()`, `comments()` |
 | vote             | Vote on posts and comments       | `links()->upvote()`, `downvote()`, `unvote()` |
-| submit           | Submit links or comments         | `links()->reply()`                       |
-| privatemessages  | Send/read private messages       | Private messages (planned)               |
+| submit           | Submit links or comments         | `links()->submitText()`, `submitLink()`, `reply()` |
+| edit             | Edit posts and comments          | `links()->edit()`                        |
+| save             | Save/unsave content              | `links()->save()`, `unsave()`            |
+| privatemessages  | Send/read private messages       | `messages()->inbox()`, `sent()`, `compose()`, `markRead()` |
+| subscribe        | Subscribe to subreddits          | `subreddit()->subscribe()`, `unsubscribe()` |
+| modposts         | Moderate posts/comments          | `moderation()->approve()`, `remove()`, `lock()`, `sticky()` |
+| flair            | Manage flair                     | `flair()->setLinkFlair()`, `setUserFlair()` |
 
 Common usage
 - Search posts:
@@ -144,14 +165,46 @@ $posts = $client->user()->submitted('spez', ['limit' => 10]);
 $client->links()->upvote('t3_abc123');
 $comment = $client->links()->reply('t3_abc123', 'Nice post!');
   ```
-- Private messages inbox:
+- Submit a text post:
+  ```php
+$post = $client->links()->submitText('test', 'My Post Title', 'Post body here', [
+    'flair_id' => 'optional-flair-id',
+    'nsfw' => false,
+]);
+  ```
+- Get comments on a post:
+  ```php
+$result = $client->comments()->get('php', 'abc123', ['sort' => 'top', 'limit' => 50]);
+// $result['post'] is a Link DTO, $result['comments'] is an array of Comment DTOs
+  ```
+- Subreddit listings (hot, new, top, rising):
+  ```php
+$hot = $client->subreddit()->hot('php', ['limit' => 25]);
+$top = $client->subreddit()->top('php', ['t' => 'week', 'limit' => 10]);
+  ```
+- Subscribe/unsubscribe:
+  ```php
+$client->subreddit()->subscribe('php');
+$client->subreddit()->unsubscribe('php');
+  ```
+- Private messages:
   ```php
 $inbox = $client->messages()->inbox(['limit' => 10]);
+$client->messages()->compose('username', 'Subject', 'Message body');
+$client->messages()->markRead(['t4_abc123', 't4_def456']);
   ```
-- Basic moderation:
+- Moderation:
   ```php
 $client->moderation()->approve('t3_abc123');
-$client->moderation()->remove('t3_abc123', true);
+$client->moderation()->remove('t3_abc123', spam: true);
+$client->moderation()->lock('t3_abc123');
+$client->moderation()->sticky('t3_abc123', num: 1);
+$client->moderation()->distinguish('t1_comment', 'yes', sticky: true);
+  ```
+- Flair management:
+  ```php
+$flairs = $client->flair()->getLinkFlairs('subreddit');
+$client->flair()->setLinkFlair('subreddit', 't3_abc123', $flairs[0]->id);
   ```
 
 Rate limiting and retries
