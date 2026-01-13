@@ -23,6 +23,32 @@ final class Auth
     }
 
     /**
+     * Generate a cryptographically secure state parameter for OAuth CSRF protection.
+     * Store this value in session before redirecting to Reddit, then validate on callback.
+     */
+    public function generateState(int $length = 32): string
+    {
+        $length = max(16, min(64, $length));
+        return bin2hex(random_bytes($length));
+    }
+
+    /**
+     * Validate OAuth state parameter to prevent CSRF attacks.
+     * Call this in your callback handler BEFORE exchanging the code.
+     *
+     * @throws AuthenticationException if state is invalid or mismatched
+     */
+    public function validateState(string $expectedState, string $actualState): void
+    {
+        if ($expectedState === '' || $actualState === '') {
+            throw new AuthenticationException('OAuth state parameter is missing', 0, null);
+        }
+        if (!hash_equals($expectedState, $actualState)) {
+            throw new AuthenticationException('OAuth state mismatch - possible CSRF attack', 0, null);
+        }
+    }
+
+    /**
      * Generate PKCE verifier and S256 challenge per RFC 7636.
      *
      * @return array{verifier:string,challenge:string}
@@ -66,7 +92,7 @@ final class Auth
             $params['code_challenge'] = $codeChallenge;
         }
 
-        return 'https://www.reddit.com/api/v1/authorize?' . http_build_query($params);
+        return $this->config->getAuthorizeUrl() . '?' . http_build_query($params);
     }
 
     /**
@@ -77,7 +103,7 @@ final class Auth
      */
     public function appOnly(string $clientId, string $clientSecret, array $scopes = ['read', 'identity']): string
     {
-        $endpoint = 'https://www.reddit.com/api/v1/access_token';
+        $endpoint = $this->config->getAccessTokenUrl();
 
         $bodyParams = [
             'grant_type' => 'client_credentials',
@@ -135,7 +161,7 @@ final class Auth
         string $redirectUri,
         ?string $codeVerifier = null
     ): array {
-        $endpoint = 'https://www.reddit.com/api/v1/access_token';
+        $endpoint = $this->config->getAccessTokenUrl();
 
         $bodyParams = [
             'grant_type' => 'authorization_code',
@@ -186,7 +212,7 @@ final class Auth
      */
     public function refreshAccessToken(string $clientId, string $clientSecret, string $refreshToken): array
     {
-        $endpoint = 'https://www.reddit.com/api/v1/access_token';
+        $endpoint = $this->config->getAccessTokenUrl();
 
         $bodyParams = [
             'grant_type' => 'refresh_token',

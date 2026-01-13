@@ -92,6 +92,11 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'json' on mixed\\.$#"
+			count: 2
+			path: src/Resources/Links.php
+
+		-
+			message: "#^Cannot access offset 'errors' on mixed\\.$#"
 			count: 1
 			path: src/Resources/Links.php
 
@@ -117,7 +122,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 0 on mixed\\.$#"
-			count: 1
+			count: 2
 			path: src/Resources/Links.php
 
 		-
@@ -127,7 +132,7 @@ parameters:
 
 		-
 			message: "#^Cannot cast mixed to string\\.$#"
-			count: 5
+			count: 6
 			path: src/Resources/Links.php
 
 		-

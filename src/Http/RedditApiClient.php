@@ -20,6 +20,12 @@ use Psr\Log\LoggerInterface;
 
 final class RedditApiClient
 {
+    private SleeperInterface $sleeper;
+
+    /**
+     * @param SleeperInterface|null $sleeper Sleeper for rate limit backoff. Defaults to RealSleeper in production.
+     *                                       Use NoopSleeper in tests to avoid actual delays.
+     */
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly RequestFactoryInterface $requestFactory,
@@ -27,9 +33,9 @@ final class RedditApiClient
         private readonly Config $config,
         private readonly ?LoggerInterface $logger = null,
         private string $accessToken = '',
-        private ?SleeperInterface $sleeper = null,
+        ?SleeperInterface $sleeper = null,
     ) {
-        $this->sleeper = $this->sleeper ?? new NoopSleeper();
+        $this->sleeper = $sleeper ?? new RealSleeper();
     }
 
     public function withToken(string $accessToken): self
@@ -103,7 +109,6 @@ final class RedditApiClient
             $this->lastRateLimitInfo = $this->parseRateLimit($response);
 
             if ($status >= 200 && $status < 300) {
-                // Optionally parse rate limit headers here (not yet surfaced)
                 return $body;
             }
 
@@ -135,7 +140,7 @@ final class RedditApiClient
         $delayMs = $retryAfterSeconds !== null
             ? max(0, $retryAfterSeconds * 1000)
             : (int) (100.0 * (2 ** ($attempt - 1))); // 100ms, 200ms, 400ms ...
-        $this->sleeper?->sleep($delayMs);
+        $this->sleeper->sleep($delayMs);
     }
 
     private function parseRateLimit(\Psr\Http\Message\ResponseInterface $response): RateLimitInfo

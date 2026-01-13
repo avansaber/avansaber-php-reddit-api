@@ -117,15 +117,6 @@ Scopes
 | submit           | Submit links or comments         | `links()->reply()`                       |
 | privatemessages  | Send/read private messages       | Private messages (planned)               |
 
-Authorization Code + PKCE (placeholder)
-- A guided example will be added soon. It will cover:
-  - Generating a code verifier/challenge (S256)
-  - Building the authorize URL with scopes and state
-  - Handling the redirect URI and exchanging the authorization code for tokens
-  - Storing tokens (including refresh token) securely and auto-refreshing
-  - Example controller/route snippets (and Laravel bridge)
-- Until then, you can use app-only auth for read operations, or supply an existing user token via `REDDIT_ACCESS_TOKEN`.
-
 Common usage
 - Search posts:
   ```php
@@ -191,7 +182,23 @@ $config = new Config(getenv('REDDIT_USER_AGENT'));
 $client = new RedditApiClient($http, $psr17, $streams, $config);
   ```
 
-- Laravel (until the dedicated bridge is released)
+- Laravel bridge (first-class)
+  - Repository: https://github.com/avansaber/avansaber-laravel-reddit-api
+  - Install:
+    ```bash
+    composer require avansaber/avansaber-laravel-reddit-api
+    ```
+  - Publish config and migrations:
+    ```bash
+    php artisan vendor:publish --tag=config --provider="Avansaber\\LaravelRedditApi\\RedditApiServiceProvider"
+    php artisan vendor:publish --tag=migrations --provider="Avansaber\\LaravelRedditApi\\RedditApiServiceProvider"
+    php artisan migrate
+    ```
+  - OAuth routes provided: `/reddit/connect`, `/reddit/callback`
+  - Env keys to set: `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`, `REDDIT_REDIRECT_URI`, `REDDIT_USER_AGENT`, `REDDIT_SCOPES`
+  - After connecting, tokens are stored in `reddit_tokens`. Resolve `Avansaber\RedditApi\Http\RedditApiClient` from the container and call APIs.
+
+- Laravel (manual wiring, if not using the bridge)
   - In `App\Providers\AppServiceProvider` → `register()`:
     ```php
 use Avansaber\RedditApi\Config\Config;
@@ -238,7 +245,7 @@ Examples
 - Me endpoint with existing token: `examples/me.php`
 
 Laravel
-- See `laravel-plan.md` for the planned bridge package.
+- See the [Laravel bridge package](https://github.com/avansaber/avansaber-laravel-reddit-api) for first-class Laravel support.
 
 Troubleshooting (403 "whoa there, pardner!")
 - Reddit may block requests based on IP/UA policies (common with VPN/DC IPs or generic UAs).

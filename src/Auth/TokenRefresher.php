@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avansaber\RedditApi\Auth;
 
-use Avansaber\RedditApi\Config\Config;
+use Avansaber\RedditApi\Exceptions\AuthenticationException;
 use Psr\Log\LoggerInterface;
 
 final class TokenRefresher
@@ -20,10 +20,21 @@ final class TokenRefresher
 
     /**
      * Refreshes a token if expired or on demand, persists it, and returns the updated Token.
+     *
+     * @throws AuthenticationException if the token has no refresh token
      */
     public function refresh(Token $token): Token
     {
-        $data = $this->auth->refreshAccessToken($this->clientId, $this->clientSecret, $token->refreshToken ?? '');
+        if ($token->refreshToken === null || $token->refreshToken === '') {
+            throw new AuthenticationException(
+                'Cannot refresh token: no refresh token available. ' .
+                'App-only tokens cannot be refreshed; obtain a new token instead.',
+                0,
+                null
+            );
+        }
+
+        $data = $this->auth->refreshAccessToken($this->clientId, $this->clientSecret, $token->refreshToken);
 
         $newAccessToken = (string) ($data['access_token'] ?? '');
         $newRefreshToken = isset($data['refresh_token']) && is_string($data['refresh_token'])

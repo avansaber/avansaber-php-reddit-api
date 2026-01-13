@@ -3,6 +3,8 @@ vendor/
 .php-cs-fixer.cache
 /package-plan.md
 /laravel-plan.md
+/project-analysis.md
+/update-plan.md
 /# Local real-life testing project (ignored)
 /php-real-test/
 /.idea/

@@ -9,6 +9,7 @@ use Avansaber\RedditApi\Auth\InMemoryTokenStorage;
 use Avansaber\RedditApi\Auth\Token;
 use Avansaber\RedditApi\Auth\TokenRefresher;
 use Avansaber\RedditApi\Config\Config;
+use Avansaber\RedditApi\Exceptions\AuthenticationException;
 use Avansaber\RedditApi\Exceptions\RedditApiException;
 use Avansaber\RedditApi\Http\AutoRefreshingClient;
 use Avansaber\RedditApi\Http\RedditApiClient;
@@ -80,6 +81,33 @@ final class AutoRefreshingClientTest extends TestCase
 
         $this->expectException(RedditApiException::class);
         $client->request('GET', '/api/v1/me');
+    }
+
+    public function test_token_refresher_throws_when_no_refresh_token(): void
+    {
+        $httpClient = new MockHttpClient();
+        $psr17 = new Psr17Factory();
+        $config = new Config('ua/1.0; contact admin@example.com');
+
+        $auth = new Auth($httpClient, $psr17, $psr17, $config, new NullLogger());
+        $storage = new InMemoryTokenStorage();
+
+        // Token without refresh token (app-only token)
+        $token = new Token(
+            providerUserId: 'app',
+            accessToken: 'app-token',
+            refreshToken: null,
+            expiresAtEpoch: time() - 10,
+            scopes: ['read'],
+            ownerUserId: null,
+            ownerTenantId: null,
+        );
+
+        $refresher = new TokenRefresher($auth, $storage, 'client', 'secret', new NullLogger());
+
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('no refresh token');
+        $refresher->refresh($token);
     }
 }
 
