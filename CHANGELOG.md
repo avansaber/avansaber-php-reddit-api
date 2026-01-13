@@ -26,8 +26,11 @@ All notable changes to this project will be documented in this file.
 - Subreddit listings: `subreddit()->hot()`, `new()`, `top()`, `rising()`, `controversial()`
 - Subreddit actions: `subreddit()->subscribe()`, `unsubscribe()`, `rules()`
 - Comments resource: `comments()->get()`, `getComment()` for fetching post comments
+- Me resource: `me()->karma()`, `prefs()`, `updatePrefs()`, `friends()`, `blocked()`, `trophies()`
+- `KarmaBreakdown` DTO for karma by subreddit
 - PHP 8.4 support in CI matrix
 - Composer dependency caching in CI
+- Example files: pkce_auth.php, voting.php, pagination.php, auto_refresh.php, moderation.php
 
 ### Fixed
 - **Security**: OAuth flow now includes state parameter helpers for CSRF protection

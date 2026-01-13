@@ -296,6 +296,11 @@ public function search(\Avansaber\RedditApi\Http\RedditApiClient $client)
 Examples
 - App-only + Search: `examples/app_only_search.php`
 - Me endpoint with existing token: `examples/me.php`
+- PKCE OAuth flow with CSRF: `examples/pkce_auth.php`
+- Voting on posts/comments: `examples/voting.php`
+- Pagination through results: `examples/pagination.php`
+- Auto-refresh token handling: `examples/auto_refresh.php`
+- Moderation actions: `examples/moderation.php`
 
 Laravel
 - See the [Laravel bridge package](https://github.com/avansaber/avansaber-laravel-reddit-api) for first-class Laravel support.
